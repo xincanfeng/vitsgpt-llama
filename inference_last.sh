@@ -11,10 +11,25 @@
 #     --max_seq_len 128 --max_batch_size 4
 
 # using llama-2-13b 
-torchrun --nproc_per_node 2 examples/example_text_completion_emo_last.py \
+torchrun --nproc_per_node 2 examples/libritts_examples/example_text_completion_emo_last.py \
     --ckpt_dir llama-2-13b/ \
     --tokenizer_path tokenizer.model \
-    --max_seq_len 256 --max_batch_size 100
+    --max_seq_len 256 --max_batch_size 50 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_text_completion_emo_last2.py \
+    --ckpt_dir llama-2-13b/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 256 --max_batch_size 50 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_text_completion_emo_last3.py \
+    --ckpt_dir llama-2-13b/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 256 --max_batch_size 50 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_text_completion_emo_last4.py \
+    --ckpt_dir llama-2-13b/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 256 --max_batch_size 50
 
 # # using llama-2-7b-chat
 # torchrun --nproc_per_node 1 examples/example_chat_completion_emo2.py \

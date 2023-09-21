@@ -23,7 +23,27 @@
 #     --max_seq_len 512 --max_batch_size 16
 
 # using llama-2-13b-chat
-torchrun --nproc_per_node 2 examples/example_chat_completion_emo_eis_word.py \
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_word.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_word2.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_word3.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_word4.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_word5.py \
     --ckpt_dir llama-2-13b-chat/ \
     --tokenizer_path tokenizer.model \
     --max_seq_len 512 --max_batch_size 16

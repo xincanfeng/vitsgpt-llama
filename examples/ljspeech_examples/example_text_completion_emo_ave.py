@@ -19,7 +19,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
+            audiopath, sentence, _ = line.strip().split('|') 
             audiopath = "DUMMY1/" + audiopath + ".wav"
             audiopaths.append(audiopath)
             sentences.append(sentence)
@@ -74,7 +74,7 @@ def main(
         # gt_embeddings = h_last_real_token_slt.cpu()
         gt_embeddings = h_ave_real_token_slt.cpu()
         # gt_embeddings = h_pca_real_token_slt.cpu()
-c
+
         total_audiopaths.extend(audiopaths)
             
         # for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
