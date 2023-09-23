@@ -27,8 +27,15 @@ def merge_pt_files(input_file_paths, output_file_path):
     
     torch.save(merged_state_dict, output_file_path)
 
+# # 使用方法
+# output_file = "/data/espnet/egs2/libritts/tts1/dump/raw"
+# merge_pt_files(
+#     [f"{output_file}/train-clean-100_phn/semantics_pca.pt", 
+#     f"{output_file}/dev-clean_phn/semantics_pca.pt"],
+#     f"{output_file}/semantics_pca100.pt")
+
 # 使用方法
-output_file = "/data/espnet/egs2/libritts/tts1/dump/raw/train-clean-100_phn/semantics_pca"
+output_file = "/data/espnet/egs2/libritts/tts1/dump/raw/train-clean-100_phn/semantics_eis_sentence"
 merge_pt_files(
     [f"{output_file}_temp_1.pt", 
     f"{output_file}_temp_2.pt", 

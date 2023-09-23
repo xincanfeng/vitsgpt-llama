@@ -26,4 +26,24 @@
 torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_sentence.py \
     --ckpt_dir llama-2-13b-chat/ \
     --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_sentence2.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_sentence3.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_sentence4.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
+    --max_seq_len 512 --max_batch_size 16 ;
+
+torchrun --nproc_per_node 2 examples/libritts_examples/example_chat_completion_emo_eis_sentence5.py \
+    --ckpt_dir llama-2-13b-chat/ \
+    --tokenizer_path tokenizer.model \
     --max_seq_len 512 --max_batch_size 16
