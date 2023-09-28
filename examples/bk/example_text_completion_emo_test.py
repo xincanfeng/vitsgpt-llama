@@ -24,9 +24,13 @@ def main(
 
     prompts = [
         # For these prompts, the expected answer is the natural continuation of the prompt
-        "Despite the intermittent rain",
-        "I believe",
-        "In the quaint town nestled between rolling hills and dense patches of cerulean bluebonnets, where children played merrily in the streets without a care in the world, and where neighbors would gather every Sunday afternoon for potlucks, sharing stories of their week, Mrs. Thompson, a sprightly old woman with a penchant for knitting colorful scarves, decided one day, much to the surprise of the townsfolk, to embark on an ambitious journey to the distant capital city, driven by her insatiable desire to witness the grand annual parade",
+        # "mɪsˈɛs də mˈoʊɹənskˌaɪlt θˈɔːt ðæt ˈɑːswəld,",
+        "Mrs. De Mohrenschildt thought that Oswald,",
+        "ðə sˈiːkɹət sˈɜːvɪs bɪlˈiːvd ðˌɐɾɪt wʌz vˈɛɹi dˈaʊtfəl ðæt ˌɛni pɹˈɛzɪdənt wʊd ɹˈaɪd ɹˈɛɡjuːlɚli ɪn ɐ vˈiəkəl wɪð ɐ fˈɪkst tˈɑːp, ˈiːvən ðˌoʊ tɹænspˈæɹənt.",
+        "The Secret Service believed that it was very doubtful that any President would ride regularly in a vehicle with a fixed top, even though transparent.",
+        # "Despite the intermittent rain",
+        # "I believe",
+        # "In the quaint town nestled between rolling hills and dense patches of cerulean bluebonnets, where children played merrily in the streets without a care in the world, and where neighbors would gather every Sunday afternoon for potlucks, sharing stories of their week, Mrs. Thompson, a sprightly old woman with a penchant for knitting colorful scarves, decided one day, much to the surprise of the townsfolk, to embark on an ambitious journey to the distant capital city, driven by her insatiable desire to witness the grand annual parade",
     ]
     results = generator.text_completion(
         prompts,
@@ -35,11 +39,12 @@ def main(
         top_p=top_p,
     )
     # 紧接着generation，调用 get_promt_last_token_embedding 方法
-    h_last_real_token_b, h_ave_real_token_b, h_last_real_token_slt, h_ave_real_token_slt, h_pca_real_token_slt = generator.get_text_prompt_token_embedding()
+    h_last_real_token_b, h_ave_real_token_b, h_last_real_token_slt, h_ave_real_token_slt, h_pca_real_token_slt, h_mat_real_token_slt = generator.get_text_prompt_token_embedding()
     # print(h_last_real_token_b.shape) 
     # print(h_ave_real_token_b)
     # print(h_last_real_token_slt)
-    print(h_ave_real_token_slt)
+    # print(h_ave_real_token_slt)
+    print(h_mat_real_token_slt)
 
     # 以下已手算验证正确
     # [ 3.4414, -1.3477,  0.6040,  ..., -2.3984,  0.1274, -1.4795]

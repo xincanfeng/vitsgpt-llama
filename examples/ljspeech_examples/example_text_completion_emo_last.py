@@ -66,14 +66,16 @@ def main(
         )
 
         # 紧接着generation，调用 get_promt_last_token_embedding 方法
-        # h_last_real_token_b, h_ave_real_token_b, h_last_real_token_slt, h_ave_real_token_slt, h_pca_real_token_slt = generator.get_text_prompt_token_embedding()
-        _, _, h_last_real_token_slt, _, _ = generator.get_text_prompt_token_embedding()
-        # _, _, _, h_ave_real_token_slt, _ = generator.get_text_prompt_token_embedding()
-        # _, _, _, _, h_pca_real_token_slt = generator.get_text_prompt_token_embedding()
+        # h_last_real_token_b, h_ave_real_token_b, h_last_real_token_slt, h_ave_real_token_slt, h_pca_real_token_slt, h_mat_real_token_sl = generator.get_text_prompt_token_embedding()
+        _, _, h_last_real_token_slt, _, _, _ = generator.get_text_prompt_token_embedding()
+        # _, _, _, h_ave_real_token_slt, _, _ = generator.get_text_prompt_token_embedding()
+        # _, _, _, _, h_pca_real_token_slt, _ = generator.get_text_prompt_token_embedding()
+        # _, _, _, _, _, h_mat_real_token_sl = generator.get_text_prompt_token_embedding()
 
         gt_embeddings = h_last_real_token_slt.cpu()
         # gt_embeddings = h_ave_real_token_slt.cpu()
         # gt_embeddings = h_pca_real_token_slt.cpu()
+        # gt_embeddings = [tensor.cpu() for tensor in h_mat_real_token_sl]
 
         total_audiopaths.extend(audiopaths)
             

@@ -111,12 +111,14 @@ class Llama:
         self.h_ave_real_token_s = None
         self.h_pca_real_token_s = None
         self.h_eis_ave_real_token_s = None
+        self.h_mat_real_token_s = None
         self._prompt_tokens = None # 初始化
         self.min_prompt_len = 0
         self.h_last_real_token_sl = []
         self.h_ave_real_token_sl = []
         self.h_pca_real_token_sl = []
         self.h_eis_ave_real_token_sl = []
+        self.h_mat_real_token_sl = []
 
         self.previous_chunk_length = 0
 
@@ -375,7 +377,7 @@ class Llama:
     # text completion输出的第一个tensor包含的tokens数是按照batch中最短的句子截断统一输出的；batchsize是batch中输入句子的数量
     def get_text_prompt_token_embedding(self):
         # print(len(self.h_list))
-        # 同一个batch中的sentence是按照batch_idx并行在h_list中的，而同一个chunk中的sentence是直接横向衔接在h_list中的. 因此先横向选择正确的chunk.
+        # 同一个batch中的sentence是按照batch_idx纵向衔接在h_list中的，而同一个chunk中的sentence是直接横向衔接在h_list中的. 因此先横向选择正确的chunk.
         h_list_current_chunk = self.get_current_chunk()
         # print(len(h_list_current_chunk))
 
@@ -391,9 +393,10 @@ class Llama:
                 for temp_prompt_pos in range(1, prompt_pos+1):
                     temp_prompt = h_list_current_chunk[temp_prompt_pos][batch_idx][:]
                     h_ave_real_token_s_cat = torch.cat((h_ave_real_token_s_cat, temp_prompt), dim=0)
-            # print('h_last/ave/pca/eis_real_token_s_cat in get_text_prompt_token_embedding')
-            # print(h_ave_real_token_s_cat.shape) # [t, d]
+            # print('h_last/ave/pca/eis/mat_real_token_s_cat in get_text_prompt_token_embedding')
+            # print(h_ave_real_token_s_cat.shape) # [t, d] t: number of tokens, d: dimension of llama output
             # print(h_ave_real_token_s_cat.dtype) # torch.float16
+            # print(h_ave_real_token_s_cat) # 这个矩阵就是所有input的token embedding矩阵
 
             # 只取每个文本的最后一个real token
             self.h_last_real_token_s = h_list_current_chunk[prompt_pos][batch_idx][-1]  
@@ -411,7 +414,11 @@ class Llama:
             self.h_pca_real_token_sl.append(self.h_pca_real_token_s)
             self.h_pca_real_token_sl_tensor = torch.stack(self.h_pca_real_token_sl, dim=0)
             
-        return self.h_last_real_token_bl, self.h_ave_real_token_bl, self.h_last_real_token_sl_tensor, self.h_ave_real_token_sl_tensor, self.h_pca_real_token_sl_tensor
+            # 用by tokens的方法，取所有tokens的embedding
+            self.h_mat_real_token_s = h_ave_real_token_s_cat
+            self.h_mat_real_token_sl.append(self.h_mat_real_token_s)
+            
+        return self.h_last_real_token_bl, self.h_ave_real_token_bl, self.h_last_real_token_sl_tensor, self.h_ave_real_token_sl_tensor, self.h_pca_real_token_sl_tensor, self.h_mat_real_token_sl
 
     # chat completion输出的第一个tensor包含的tokens数量是batch中每个prompt的实际长度；batchsize是一次对话中的句子数量
     def get_chat_prompt_token_embedding(self):
