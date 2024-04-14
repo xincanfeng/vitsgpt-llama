@@ -17,8 +17,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            audiopath, sentence = line.strip().split('|')
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -34,8 +33,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
-    output_file: str = '/data/vitsGPT/vits/filelists/ljs_audio_sem_eis_word_5120.pt',
+    input_file: str = '/data/vitsGPT/datasets/EmoV_DB_bea_filtered/metadata.csv',
+    output_file: str = '/data/vitsGPT/datasets/EmoV_DB_bea_filtered/emovdb-bea_audio_emo.txt',
     temperature: float = 0.6,
     top_p: float = 0.9,
     max_seq_len: int = 512,
@@ -59,16 +58,8 @@ def main(
         for sentence in sentences:
             dialogs=[
                 [
-                    {"role": "system", "content": "Always answer within a word."},
+                    {"role": "system", "content": "Always answer using a word among: Amused, Angry, Disgusted, Neutral, Sleepy. Or answer 'not sure' if you are not sure about the answer."},
                     {"role": "user", "content": f"what is the emotion of the sentence: {sentence}"},
-                ],
-                [
-                    {"role": "system", "content": "Always answer within a word."},
-                    {"role": "user", "content": f"what is the intention of the sentence: {sentence}"},
-                ],
-                [
-                    {"role": "system", "content": "Always answer within a word."},
-                    {"role": "user", "content": f"what is the speaking style of the sentence: {sentence}"},
                 ],
             ]
 
@@ -79,10 +70,6 @@ def main(
                 top_p=top_p,
             )
             
-            h_eis_ave_real_token_slt = generator.get_chat_prompt_token_embedding()
-            gt_embeddings = h_eis_ave_real_token_slt.cpu()
-
-            print(gt_embeddings)
             for dialog, result in zip(dialogs, results):
                 for msg in dialog:
                     print(f"{msg['role'].capitalize()}: {msg['content']}\n")
@@ -90,11 +77,14 @@ def main(
                     f"> {result['generation']['role'].capitalize()}: {result['generation']['content']}"
                 )
                 print("\n==================================\n")
-
-    for audiopath, embedding in zip(total_audiopaths, gt_embeddings):
-        output_dict[audiopath] = embedding
-    # 保存字典为PyTorch的.pt文件
-    torch.save(output_dict, output_file) # -1.0436, -0.8646
+    
+            output_dict[sentence] = results
+            
+    with open(output_file, 'w') as file:
+        for sentence, results in output_dict.items():
+            # 这里假设 result 已经是一个字符串。如果不是，请调用 str() 进行转换。
+            file.write(f"{results}|{sentence}\n")
+    
 
 if __name__ == "__main__":
     fire.Fire(main)

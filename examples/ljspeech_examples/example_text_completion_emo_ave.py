@@ -6,7 +6,7 @@ import torch
 from llama import Llama
 
 
-output_file_name = 'ljs_audio_gt_ave'
+output_file_name = 'ljs_audio_sem_ave'
 
 def load_sentences_from_file(input_file: str, batch_size: int):
     """

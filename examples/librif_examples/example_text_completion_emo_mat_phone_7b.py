@@ -6,7 +6,7 @@ import torch
 from llama import Llama
 
 
-output_file_name = 'ljs_audio_sem_last'
+output_file_name = 'librif_audio_sem_mat_phone'
 
 def load_sentences_from_file(input_file: str, batch_size: int):
     """
@@ -19,8 +19,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            audiopath, sentence = line.strip().split('|') 
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -36,13 +35,13 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
-    output_file: str = f"/data/vitsGPT/vits/filelists/{output_file_name}_5120.pt",
+    input_file: str = '/data/vitsGPT/vits/filelists/librif_audio_text_all_filelist.txt.cleaned',
+    output_file: str = f"/data/vitsGPT/vits/filelists/{output_file_name}_t4096.pt",
     temperature: float = 0.6,
     top_p: float = 0.9,
-    max_seq_len: int = 256,
+    max_seq_len: int = 512,
     max_gen_len: int = 64,
-    max_batch_size: int = 100, # 本文件中每次最大输入的句子数
+    max_batch_size: int = 8, # 本文件中每次最大输入的句子数
 ):
     
     generator = Llama.build(
@@ -67,25 +66,26 @@ def main(
 
         # 紧接着generation，调用 get_promt_last_token_embedding 方法
         # h_last_real_token_b, h_ave_real_token_b, h_last_real_token_slt, h_ave_real_token_slt, h_pca_real_token_slt, h_mat_real_token_sl = generator.get_text_prompt_token_embedding()
-        _, _, h_last_real_token_slt, _, _, _ = generator.get_text_prompt_token_embedding()
+        # _, _, h_last_real_token_slt, _, _, _ = generator.get_text_prompt_token_embedding()
         # _, _, _, h_ave_real_token_slt, _, _ = generator.get_text_prompt_token_embedding()
         # _, _, _, _, h_pca_real_token_slt, _ = generator.get_text_prompt_token_embedding()
-        # _, _, _, _, _, h_mat_real_token_sl = generator.get_text_prompt_token_embedding()
+        _, _, _, _, _, h_mat_real_token_sl = generator.get_text_prompt_token_embedding()
 
-        gt_embeddings = h_last_real_token_slt.cpu()
+        # gt_embeddings = h_last_real_token_slt.cpu()
         # gt_embeddings = h_ave_real_token_slt.cpu()
         # gt_embeddings = h_pca_real_token_slt.cpu()
-        # gt_embeddings = [tensor.cpu() for tensor in h_mat_real_token_sl]
+        gt_embeddings = [tensor.cpu() for tensor in h_mat_real_token_sl]
+
 
         total_audiopaths.extend(audiopaths)
             
-        # for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
-        #     print(f"geting embedding for {output_file_name}:")
-        #     print(audiopath)
-        #     print(prompt)
-        #     print(result)
-        #     print(embedding[:10])
-        #     print("\n==================================\n")
+        for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
+            print(f"geting embedding for {output_file_name}:")
+            print(audiopath)
+            print(prompt)
+            print(result)
+            print(embedding[:10])
+            print("\n==================================\n")
 
     for audiopath, embedding in zip(total_audiopaths, gt_embeddings):
         output_dict[audiopath] = embedding

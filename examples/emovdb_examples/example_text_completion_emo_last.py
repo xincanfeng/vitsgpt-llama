@@ -6,7 +6,7 @@ import torch
 from llama import Llama
 
 
-output_file_name = 'ljs_audio_sem_last'
+output_file_name = 'emovdb_audio_sem_last'
 
 def load_sentences_from_file(input_file: str, batch_size: int):
     """
@@ -19,8 +19,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            _, _, audiopath, sentence = line.strip().split('|')
+            audiopath = "DUMMY5/" + audiopath
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -36,7 +36,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
+    input_file: str = '/data/vitsGPT/datasets/EmoV_DB_bea_filtered/audio_llama-emo_wav_filtered.txt',
     output_file: str = f"/data/vitsGPT/vits/filelists/{output_file_name}_5120.pt",
     temperature: float = 0.6,
     top_p: float = 0.9,
@@ -79,13 +79,13 @@ def main(
 
         total_audiopaths.extend(audiopaths)
             
-        # for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
-        #     print(f"geting embedding for {output_file_name}:")
-        #     print(audiopath)
-        #     print(prompt)
-        #     print(result)
-        #     print(embedding[:10])
-        #     print("\n==================================\n")
+        for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
+            print(f"geting embedding for {output_file_name}:")
+            print(audiopath)
+            print(prompt)
+            print(result)
+            print(embedding[:10])
+            print("\n==================================\n")
 
     for audiopath, embedding in zip(total_audiopaths, gt_embeddings):
         output_dict[audiopath] = embedding

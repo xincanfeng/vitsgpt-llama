@@ -6,7 +6,7 @@ import torch
 from llama import Llama
 
 
-output_file_name = 'ljs_audio_sem_last'
+output_file_name = 'librif_audio_sem_last'
 
 def load_sentences_from_file(input_file: str, batch_size: int):
     """
@@ -19,8 +19,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            audiopath, sentence = line.strip().split('|')
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -36,8 +35,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
-    output_file: str = f"/data/vitsGPT/vits/filelists/{output_file_name}_5120.pt",
+    input_file: str = '/data/vitsGPT/vits/filelists/librif_audio_text_all_filelist.txt',
+    output_file: str = f"/data/vitsGPT/vits/filelists/{output_file_name}_4096.pt",
     temperature: float = 0.6,
     top_p: float = 0.9,
     max_seq_len: int = 256,
@@ -79,13 +78,13 @@ def main(
 
         total_audiopaths.extend(audiopaths)
             
-        # for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
-        #     print(f"geting embedding for {output_file_name}:")
-        #     print(audiopath)
-        #     print(prompt)
-        #     print(result)
-        #     print(embedding[:10])
-        #     print("\n==================================\n")
+        for audiopath, prompt, result, embedding in zip(audiopaths, prompts, results, gt_embeddings):
+            print(f"geting embedding for {output_file_name}:")
+            print(audiopath)
+            print(prompt)
+            print(result)
+            print(embedding[:10])
+            print("\n==================================\n")
 
     for audiopath, embedding in zip(total_audiopaths, gt_embeddings):
         output_dict[audiopath] = embedding

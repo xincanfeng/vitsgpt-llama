@@ -17,8 +17,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            _, _, audiopath, sentence = line.strip().split('|')
+            audiopath = "DUMMY5/" + audiopath
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -34,8 +34,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
-    output_file: str = '/data/vitsGPT/vits/filelists/ljs_audio_sem_eis_word_5120.pt',
+    input_file: str = '/data/vitsGPT/datasets/EmoV_DB_bea_filtered/audio_llama-emo_wav_filtered.txt',
+    output_file: str = '/data/vitsGPT/vits/filelists/emovdb_audio_sem_eis_sentence_4096.pt',
     temperature: float = 0.6,
     top_p: float = 0.9,
     max_seq_len: int = 512,
@@ -59,17 +59,9 @@ def main(
         for sentence in sentences:
             dialogs=[
                 [
-                    {"role": "system", "content": "Always answer within a word."},
-                    {"role": "user", "content": f"what is the emotion of the sentence: {sentence}"},
-                ],
-                [
-                    {"role": "system", "content": "Always answer within a word."},
-                    {"role": "user", "content": f"what is the intention of the sentence: {sentence}"},
-                ],
-                [
-                    {"role": "system", "content": "Always answer within a word."},
-                    {"role": "user", "content": f"what is the speaking style of the sentence: {sentence}"},
-                ],
+                    {"role": "system", "content": "Always answer within a sentence even if there are multiple requirements. Never chat about yourself."},
+                    {"role": "user", "content": f"Describe the emotion, intention, and speaking style of the sentence in a easy-to-understand sentence: {sentence}"},
+                ]
             ]
 
             results = generator.chat_completion(
@@ -82,7 +74,6 @@ def main(
             h_eis_ave_real_token_slt = generator.get_chat_prompt_token_embedding()
             gt_embeddings = h_eis_ave_real_token_slt.cpu()
 
-            print(gt_embeddings)
             for dialog, result in zip(dialogs, results):
                 for msg in dialog:
                     print(f"{msg['role'].capitalize()}: {msg['content']}\n")
@@ -94,7 +85,7 @@ def main(
     for audiopath, embedding in zip(total_audiopaths, gt_embeddings):
         output_dict[audiopath] = embedding
     # 保存字典为PyTorch的.pt文件
-    torch.save(output_dict, output_file) # -1.0436, -0.8646
+    torch.save(output_dict, output_file) 
 
 if __name__ == "__main__":
     fire.Fire(main)

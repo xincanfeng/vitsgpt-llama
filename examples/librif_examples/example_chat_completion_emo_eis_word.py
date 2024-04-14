@@ -17,8 +17,7 @@ def load_sentences_from_file(input_file: str, batch_size: int):
     
     with open(input_file, 'r') as file:
         for line in file:
-            audiopath, sentence, _ = line.strip().split('|')
-            audiopath = "DUMMY1/" + audiopath + ".wav"
+            audiopath, sentence = line.strip().split('|')
             audiopaths.append(audiopath)
             sentences.append(sentence)
             
@@ -34,8 +33,8 @@ def load_sentences_from_file(input_file: str, batch_size: int):
 def main(
     ckpt_dir: str,
     tokenizer_path: str,
-    input_file: str = '/data/vitsGPT/datasets/LJSpeech-1.1/metadata.csv',
-    output_file: str = '/data/vitsGPT/vits/filelists/ljs_audio_sem_eis_word_5120.pt',
+    input_file: str = '/data/vitsGPT/vits/filelists/librif_audio_text_all_filelist.txt',
+    output_file: str = '/data/vitsGPT/vits/filelists/librif_audio_sem_eis_word_5120.pt',
     temperature: float = 0.6,
     top_p: float = 0.9,
     max_seq_len: int = 512,
